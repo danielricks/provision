@@ -89,12 +89,14 @@ sudo apt-get update
 sudo apt-get install cuda
 }
 
+calibre() {
 # Calibre
 # You must have xdg-utils, wget and python ≥ 2.6 installed on your system before running the installer. (Those are standard in Ubuntu)
 sudo -v && wget -nv -O- https://raw.githubusercontent.com/kovidgoyal/calibre/master/setup/linux-installer.py | sudo python -c "import sys; main=lambda:sys.stderr.write('Download failed\n'); exec(sys.stdin.read()); main()"
 # If you get an error about an untrusted certificate, that means your computer does not have any root certificates installed and so cannot download the installer securely. If you still want to proceed, pass the --no-check-certificate option to wget, like this:
 # sudo -v && wget --no-check-certificate -nv -O- https://raw.githubusercontent.com/kovidgoyal/calibre/master/setup/linux-installer.py | sudo python -c "import sys; main=lambda:sys.stderr.write('Download failed\n'); exec(sys.stdin.read()); main()"
 # You can uninstall calibre by running sudo calibre-uninstall. Alternately, simply deleting the installation directory will remove 99% of installed files.
+}
 
 plex() {
 sudo gpasswd -a plex plugdev
