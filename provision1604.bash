@@ -3,14 +3,16 @@ set -e
 
 gsettings set com.canonical.Unity.Lenses remote-content-search 'none'
 
+sudo apt-get install build-essential
 sudo apt-get update
 
 basics() {
-sudo apt-get -y install git vim pip vlc gparted screen
+sudo apt-get -y install git vim python-pip vlc gparted screen cython
 }
 
 pips() {
-pip install tqdm nltk cython word2vec tensorflow ipython --upgrade
+pip install --upgrade pip
+sudo pip install tqdm nltk word2vec tensorflow ipython --upgrade
 # conda install tensorflow
 }
 
@@ -21,17 +23,24 @@ python -m nltk.downloader all
 sublime() {
 sudo add-apt-repository ppa:webupd8team/sublime-text-2
 sudo apt-get update
-sudo apt-get --purge remove sublime-text*
-sudo apt-get install sublime-text
+sudo apt-get -y --purge remove sublime-text*
+sudo apt-get -y install sublime-text
 }
 
 dropbox() {
 #cd ~ && wget -O - "https://www.dropbox.com/download?plat=lnx.x86_64" | tar xzf -
 #~/.dropbox-dist/dropboxd
-sudo apt-key adv --keyserver pgp.mit.edu --recv-keys 5044912E
-sudo add-apt-repository "deb http://linux.dropbox.com/ubuntu $(lsb_release -sc) main"
+#sudo apt-key adv --keyserver pgp.mit.edu --recv-keys 5044912E
+#sudo add-apt-repository "deb http://linux.dropbox.com/ubuntu $(lsb_release -sc) main"
+#sudo apt-get update
+#sudo apt-get install -y nautilus-dropbox
+echo 'deb http://linux.dropbox.com/ubuntu saucy main'>>'dropbox.list'
+chmod 644 'dropbox.list'
+sudo chown root:root 'dropbox.list'
+sudo mv 'dropbox.list' '/etc/apt/sources.list.d/dropbox.list'
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 5044912E
 sudo apt-get update
-sudo apt-get install -y nautilus-dropbox
+sudo apt-get -y install dropbox
 }
 
 games() {
@@ -40,14 +49,14 @@ sudo apt-get install -y visualboyadvance mupen64plus zsnes
 
 playonlinux() {
 wget https://www.playonlinux.com/script_files/PlayOnLinux/4.2.10/PlayOnLinux_4.2.10.deb
-dpkg -i PlayOnLinux_4.2.10.deb
+sudo dpkg -i PlayOnLinux_4.2.10.deb
 rm PlayOnLinux_4.2.10.deb
 }
 
 wine() {
-add-apt-repository -y ppa:wine/wine-builds
+sudo add-apt-repository -y ppa:wine/wine-builds
 sudo apt-get update
-apt-get --assume-yes install --install-recommends winehq-devel
+sudo apt-get --assume-yes install --install-recommends winehq-devel
 }
 
 steam() {
@@ -58,22 +67,23 @@ jdk8() {
 sudo apt install python-software-properties -y
 sudo add-apt-repository ppa:webupd8team/java -y
 sudo apt update
-sudo apt install oracle-java8-installer -y
+sudo apt -y install oracle-java8-installer
+sudo apt -y install oracle-java8-set-default
 }
 
 clementine() {
-sudo add-apt-repository ppa:me-davidsansome/clementine
+sudo add-apt-repository ppa:me-davidsansome/clementine -y
 #sudo add-apt-repository ppa:gstreamer-developers/ppa
 sudo apt-get update
-sudo apt-get install clementine
+sudo apt-get -y install clementine
 }
 
 dconftools() {
-sudo apt-get install dconf-tools
+sudo apt-get -y install dconf-tools
 }
 
 chromium() {
-sudo apt-get install chromium-browser
+sudo apt-get -y install chromium-browser
 }
 
 chrome() {
@@ -159,14 +169,15 @@ nltkdownloads
 sublime
 dropbox
 games
-playonlinux
-wine
+#playonlinux
+#wine
 steam
 jdk8
 clementine
 dconftools
 
-apt-get -y upgrade
+sudo apt-get -y upgrade
+sudo apt autoremove
 
 clear
 echo 'Reboot now.'
