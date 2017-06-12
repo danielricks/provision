@@ -82,6 +82,11 @@ dconftools() {
 sudo apt-get -y install dconf-tools
 }
 
+clam() {
+sudo apt-install -y clamav
+sudo apt-install -y clamtk
+}
+
 chromium() {
 sudo apt-get -y install chromium-browser
 }
