@@ -113,6 +113,71 @@ sudo -v && wget -nv -O- https://raw.githubusercontent.com/kovidgoyal/calibre/mas
 # You can uninstall calibre by running sudo calibre-uninstall. Alternately, simply deleting the installation directory will remove 99% of installed files.
 }
 
+new_public_key() {
+	# generate public key for git and other purposes
+	mkdir -p "$HOME/.ssh"
+	keypath="$HOME/.ssh/id_rsa"
+	ssh-keygen -t rsa -C "$user_email" -N "" -f "$keypath"
+	chmod 0600 "$keypath"
+}
+
+anaconda() {
+	# install Anaconda (Python 2.7 version)
+	# NOTE that we prefer system python by default; user can specify anaconda
+	# python path if they want that one
+	anaconda_installer_file=$(basename "$anaconda_download_url")
+	if [ ! -f "$anaconda_installer_file" ]
+	then
+		wget "$anaconda_download_url"
+	fi
+	chmod +x "$anaconda_installer_file"
+	"./$anaconda_installer_file" -b -p "$anaconda_prefix"
+	export ANACONDA="$anaconda_prefix"
+	export PATH="$PATH:$anaconda_prefix/bin"
+}
+
+anaconda_bashrc() {
+	echo "ANACONDA=\"$anaconda_prefix\"" >> $HOME/.bashrc
+	echo "PATH=\"\$PATH:$anaconda_prefix/bin\"" >> $HOME/.bashrc
+}
+
+install_glances_with_plugins() {
+	# https://github.com/nicolargo/glances
+	
+	apt install python-pip python-dev -y
+	pip install glances[gpu,ip]
+
+	# install nvidia-ml-py dependency from source, because authors didn't update their pip module
+	# https://github.com/jonsafari/nvidia-ml-py
+	curl -O -J "https://pypi.python.org/packages/72/31/378ca145e919ca415641a0f17f2669fa98c482a81f1f8fdfb72b1f9dbb37/nvidia-ml-py-7.352.0.tar.gz"
+	tar -xzf "nvidia-ml-py-7.352.0.tar.gz"
+	cd "nvidia-ml-py-7.352.0/"
+	python setup.py install
+	cd ..
+	rm -rf "./nvidia-ml-py-7.352.0"*
+
+	# write a config that adds some port RTTs to the monitor
+	glances_conf_dir="/etc/glances"
+	mkdir -p $glances_conf_dir
+	cat <<-EOF > $glances_conf_dir/glances.conf
+		[ports]
+		refresh=5
+
+		port_1_description=pccfs
+		port_1_host=pccfs.cs.byu.edu
+		port_1_port=22
+		port_1_rtt_warning=5
+
+		port_2_description=google.com
+		port_2_host=google.com
+		port_2_port=443
+		port_2_rtt_warning=250
+	EOF
+
+	# TODO: Print some basic usage instructions? (-1 and -6 hotkeys, and how to sort process list?)
+	glances -V
+}
+
 plex() {
 sudo gpasswd -a plex plugdev
 maybe sudo gpasswd -a plex dan
