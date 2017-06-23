@@ -168,6 +168,45 @@ anaconda_bashrc() {
 	echo "PATH=\"\$PATH:$anaconda_prefix/bin\"" >> $HOME/.bashrc
 }
 
+docker() {
+# SET UP THE REPOSITORY
+
+# Update packages
+sudo apt-get update
+# Install software that enables Docker to use the aufs storage drivers
+sudo apt-get install \
+    linux-image-extra-$(uname -r) \
+    linux-image-extra-virtual
+# Install packages to allow apt to use a repository over HTPPS
+sudo apt-get install \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    software-properties-common
+# Add Docker's official GPG key
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+# Verify the key fingerprint
+sudo apt-key fingerprint 0EBFCD88
+# Add the AMD64 stable repository
+sudo add-apt-repository \
+   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+   $(lsb_release -cs) \
+   stable"
+
+# INSTALL DOCKER
+
+# Update the apt package index
+sudo apt-get update
+# Install the latest version of Docker (any existing installation of Docker is replaced)
+sudo apt-get install docker-ce
+# List the version of Docker that is compatible with your machine
+apt-cache madison docker-ce
+# Install the specific version of Docker (get <VERSION> from above command (e.g. '17.03.0~ce-0~ubuntu-trusty'))
+sudo apt-get install docker-ce=<VERSION>
+# verify that Docker is installed correctly
+sudo docker run hello-world
+}
+
 install_glances_with_plugins() {
 	# https://github.com/nicolargo/glances
 	
