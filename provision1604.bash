@@ -114,6 +114,10 @@ sudo apt-get update
 sudo apt-get -y --force-yes install python-graph-tool
 }
 
+pdftk() {
+sudo apt-get -y install pdftk
+}
+
 chromium() {
 sudo apt-get -y install chromium-browser
 }
