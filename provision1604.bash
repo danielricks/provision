@@ -108,6 +108,20 @@ sudo apt-get update
 sudo apt-get install cuda
 }
 
+ffmpeg() {
+# Add the PPA repository (unofficial):
+sudo add-apt-repository ppa:jonathonf/ffmpeg-3
+
+# (For Ubuntu 14.04 only), you also need to add another PPA for the dependencies::
+# sudo add-apt-repository ppa:jonathonf/tesseract
+
+# Then upgrade FFmpeg:
+sudo apt update && sudo apt upgrade
+
+# To undo the changes and restore to the stock version of FFmpeg in main Ubuntu repositories, purge the PPA via command:
+# sudo apt install ppa-purge && ppa-purge ppa:jonathonf/ffmpeg-3
+}
+
 calibre() {
 # Calibre
 # You must have xdg-utils, wget and python ≥ 2.6 installed on your system before running the installer. (Those are standard in Ubuntu)
